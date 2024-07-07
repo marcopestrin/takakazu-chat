@@ -33,5 +33,3 @@ jobs:
             sudo apt upgrade
             sudo npm install
             sudo npm start
-            cd home
-            sudo mv * /var/www/html
