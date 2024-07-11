@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Checkout the files
         uses: actions/checkout@v2
 
@@ -29,7 +30,5 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            sudo apt update
-            sudo apt upgrade
-            sudo npm install
-            sudo npm start
+            chmod +x ./deploy.sh
+            ./deploy.sh
