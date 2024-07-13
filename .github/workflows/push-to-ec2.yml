@@ -23,14 +23,13 @@ jobs:
           git reset --hard origin/main
 
 
-
       - name: Deploy to Server 1
         uses: easingthemes/ssh-deploy@main
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
           REMOTE_HOST: ${{ secrets.HOST_DNS }}
           REMOTE_USER: ${{ secrets.USERNAME }}
-          TARGET: ${{ secrets.TARGET_DIR }}
+          TARGET: ${{ secrets.TARGET_DIR }} # /home/ubuntu/app
 
       - name: Executing remote ssh commands using ssh key
         uses: appleboy/ssh-action@master

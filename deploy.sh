@@ -39,7 +39,6 @@ sudo ln -s /etc/nginx/sites-available/react /etc/nginx/sites-enabled/
 sudo gpasswd -a www-data ubuntu
 
 
-
 echo "Restarting Nginx"
 sudo systemctl restart nginx
 sudo systemctl status nginx
