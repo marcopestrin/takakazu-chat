@@ -17,6 +17,9 @@ jobs:
         with:
           ref: main
 
+      - name: Git pull latest changes
+        run: git pull origin main
+
       - name: Deploy to Server 1
         uses: easingthemes/ssh-deploy@main
         env:
