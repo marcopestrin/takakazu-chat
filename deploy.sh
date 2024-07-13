@@ -38,6 +38,9 @@ sudo ln -s /etc/nginx/sites-available/react /etc/nginx/sites-enabled/
 # Add www-data to ubuntu group
 sudo gpasswd -a www-data ubuntu
 
+echo "install Nginx"
+sudo apt update
+sudo apt install nginx
 
 echo "Restarting Nginx"
 sudo systemctl restart nginx
