@@ -32,7 +32,20 @@ sudo cp -Rp build/* /var/www/vhosts/frontend/build
 
 echo "Setting up Nginx configuration"
 cd /etc/nginx/sites-enabled
-# sudo nano /etc/nginx/sites-available/react
+rm -rf /etc/nginx/sites-enabled/default # eventually
+
+# settings Nginx
+echo 'server {
+    listen 80 default_server;
+    server_name _;
+
+    location / {
+        autoindex on;
+        root /var/www/vhosts/frontend/build;
+        try_files $uri /index.html;
+    }
+}' | sudo tee /etc/nginx/sites-available/react >/dev/null
+
 sudo ln -s /etc/nginx/sites-available/react /etc/nginx/sites-enabled/
 
 # Add www-data to ubuntu group
