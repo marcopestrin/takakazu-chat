@@ -22,7 +22,6 @@ jobs:
           git fetch origin main  
           git reset --hard origin/main
 
-
       - name: Deploy to Server 1
         uses: easingthemes/ssh-deploy@main
         env:
