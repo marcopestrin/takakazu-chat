@@ -1,5 +1,4 @@
 #!/bin/bash
-
 echo "Starting script..."
 
 if ! command -v node &> /dev/null
@@ -11,7 +10,8 @@ else
     echo "Node.js is already installed."
 fi
 
-cd app
+echo "Installing packages..."
+cd app # eventually
 npm i
 if [ -d "build" ]
 then
@@ -23,18 +23,13 @@ fi
 
 echo "Bulding frontend..."
 npm run build 
-
-echo "Copying build to /var/www/vhosts/frontend..."
 sudo rm -rf /var/www/vhosts/frontend/build
 sudo mkdir -p /var/www/vhosts/frontend/build
 sudo cp -Rp build/* /var/www/vhosts/frontend/build
 
-
 echo "Setting up Nginx configuration"
 cd /etc/nginx/sites-enabled
 rm -rf /etc/nginx/sites-enabled/default # eventually
-
-# settings Nginx
 echo 'server {
     listen 80 default_server;
     server_name _;
@@ -45,17 +40,17 @@ echo 'server {
         try_files $uri /index.html;
     }
 }' | sudo tee /etc/nginx/sites-available/react >/dev/null
-
 sudo ln -s /etc/nginx/sites-available/react /etc/nginx/sites-enabled/
 
 # Add www-data to ubuntu group
 sudo gpasswd -a www-data ubuntu
 
-echo "install Nginx"
+echo "install Nginx..."
 sudo apt update
 sudo apt install nginx
 
-echo "Restarting Nginx"
+echo "Restarting Nginx..."
 sudo systemctl restart nginx
 sudo systemctl status nginx
-echo "Script execution completed."
+
+echo "Script execution completed!"
