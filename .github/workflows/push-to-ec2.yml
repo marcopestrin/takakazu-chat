@@ -21,6 +21,7 @@ jobs:
         run: |
           git fetch origin main  
           git reset --hard origin/main
+          git clean -df
 
       - name: Show current branch
         run: |
