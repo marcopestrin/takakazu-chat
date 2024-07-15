@@ -27,6 +27,10 @@ jobs:
           git branch
           git status -s
 
+      - name: Show directory structure
+        run: |
+          tree -L 4  
+
       - name: Deploy to Server 1
         uses: easingthemes/ssh-deploy@main
         env:
