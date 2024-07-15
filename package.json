@@ -1,18 +1,14 @@
 {
   "name": "takakazu-chat",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": "Marco Pestrin",
   "private": true,
   "dependencies": {
-    "pm2": "^5.4.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-scripts": "^5.0.1"
   },
   "scripts": {
-    "start-pm2": "pm2 start npm --name 'takakazu-chat' -- start",
-    "stop-pm2": "pm2 delete takakazu-chat || true",
-    "save-pm2": "pm2 save",
     "start": "react-scripts start",
     "build": "react-scripts build"
   },
