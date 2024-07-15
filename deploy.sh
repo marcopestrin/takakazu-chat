@@ -26,7 +26,7 @@ npm run build
 
 echo "Copying build to /var/www/vhosts/frontend..."
 sudo rm -rf /var/www/vhosts/frontend/build
-sudo mkdir /var/www/vhosts/frontend/build
+sudo mkdir -p /var/www/vhosts/frontend/build
 sudo cp -Rp build/* /var/www/vhosts/frontend/build
 
 
