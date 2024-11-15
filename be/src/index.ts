@@ -5,11 +5,11 @@ import { Server as SocketIOServer, Socket } from 'socket.io';
 import cors  from 'cors';;
 dotenv.config({ path: '../.env' }); 
 
-
+const roomName = 'main-room'
 const bePort = process.env.BE_PORT
 const fontendUrl = `http://localhost:${process.env.BE_FRONTEND_PORT}`
-
 const app = express();
+
 app.use(cors({
   origin: fontendUrl
 }));
@@ -28,14 +28,18 @@ const io = new SocketIOServer(server,{
 });
 
 io.on('connection', (socket: Socket) => {
-  console.log('Un client si è connesso:', socket.id);
+  socket.join(roomName);
+  console.log(`User '${socket.id}' added to '${roomName}'`);
 
-  socket.on('send_message', (payload: string) => {
+  socket.on('message', (payload: string) => {
     const { message, userId } = JSON.parse(payload);
-    console.log('Messaggio ricevuto:', userId, message);
-    io.emit('chat message', message);
+    console.log(`message received: '${message}' from '${userId}'`);
+    io.to(roomName).emit('message', JSON.parse(payload));
   });
 
+  socket.on('disconnect', () => {
+    console.log('Disconnected user:', socket.id);
+  });
 
 });
 
