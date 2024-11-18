@@ -2,7 +2,8 @@ import * as dotenv from 'dotenv';
 import express from 'express';
 import http from 'http';
 import { Server as SocketIOServer, Socket } from 'socket.io';
-import cors  from 'cors';;
+import cors  from 'cors';
+import { saveMessage, connectToDatabase } from './database'
 dotenv.config({ path: '../.env' }); 
 
 const roomName = 'main-room'
@@ -31,10 +32,17 @@ io.on('connection', (socket: Socket) => {
   socket.join(roomName);
   console.log(`User '${socket.id}' added to '${roomName}'`);
 
+  const db = connectToDatabase()
+
   socket.on('message', (payload: string) => {
     const { message, userId } = JSON.parse(payload);
     console.log(`message received: '${message}' from '${userId}'`);
     io.to(roomName).emit('message', JSON.parse(payload));
+    saveMessage({
+      timestamp: new Date().toISOString(),
+      message,
+      username: userId
+    })
   });
 
   socket.on('disconnect', () => {

@@ -17,11 +17,13 @@
     "express": "^4.19.2",
     "install": "^0.13.0",
     "npm": "^10.8.2",
+    "pg": "^8.13.1",
     "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5",
     "typescript": "^5.5.3"
   },
   "devDependencies": {
+    "@types/pg": "^8.11.10",
     "nodemon": "^3.1.7"
   }
 }
