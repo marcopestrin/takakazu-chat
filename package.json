@@ -14,13 +14,20 @@
     "lint": "eslint 'src/**/*.{ts,tsx}' --fix"
   },
   "dependencies": {
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@fontsource/inter": "^5.1.0",
+    "@mui/joy": "^5.0.0-beta.48",
+    "@mui/material": "^6.1.7",
+    "@mui/styled-engine-sc": "^6.1.7",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "dotenv": "^16.4.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-scripts": "^5.0.1",
-    "socket.io-client": "^4.8.1"
+    "socket.io-client": "^4.8.1",
+    "styled-components": "^6.1.13"
   },
   "author": "Marco Pestrin",
   "license": "ISC",

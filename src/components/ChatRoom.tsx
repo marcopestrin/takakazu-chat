@@ -1,5 +1,13 @@
   import React, { useState, useEffect } from 'react';
   import io from 'socket.io-client';
+  import Button from '@mui/material/Button';
+  import TextField from '@mui/material/TextField';
+  import Box from '@mui/material/Box';
+  import Grid from '@mui/material/Grid2';
+  import List from '@mui/material/List';
+  import ListItemText from '@mui/material/ListItemText';
+  import ListItem from '@mui/material/ListItem';
+
 
   const urlBackend = `http://localhost:${process.env.REACT_APP_BACKEND_PORT}`;
   const socket = io(urlBackend);
@@ -43,38 +51,54 @@
     };
 
     return (
-      <div>
-        <div>
-          {messages.map((message, index) => (
-            <div key={index}>
-              {
-                message.userId === username ? (
-                  <strong>{`${message.userId}: ${message.message}`}</strong>
-                ) :(
-                  `${message.userId}: ${message.message}`
-                )
-              }
-            </div>
-          ))}
-        </div>
-        <input
-          type="text"
-          placeholder='username'
-          disabled={usernameLock}
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder='message'
-          value={inputMessage}
-          onChange={(e) => setInputMessage(e.target.value)}
-        />
-        <button
-          onClick={handleMessageSend}
-          disabled={username === ''}
-        >Send</button>
-      </div>
+        <Box>
+          <List>
+            {messages.map((message, index) => (
+              <ListItem disablePadding>
+                <ListItemText>
+                  {
+                    message.userId === username ? (
+                      <strong>{`${message.userId}: ${message.message}`}</strong>
+                    ) :(
+                      `${message.userId}: ${message.message}`
+                    )
+                  }
+                </ListItemText>
+              </ListItem>
+            ))}
+          </List>
+          <Grid container spacing={2} alignItems="center">
+            <Grid size={2}>
+              <TextField
+                id="username"
+                label="username"
+                variant="outlined"
+                disabled={usernameLock}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+            </Grid>
+            <Grid size={8}>
+              <TextField
+                id="message"
+                label="message"
+                fullWidth
+                variant="outlined"
+                value={inputMessage}
+                multiline
+                onChange={(e) => setInputMessage(e.target.value)}
+              />
+            </Grid>
+            <Grid size={2}>
+              <Button
+                variant="outlined"
+                fullWidth
+                disabled={username === ''}
+                onClick={handleMessageSend}
+              >Send</Button>
+            </Grid>
+          </Grid>
+        </Box>
     );
   };
 
