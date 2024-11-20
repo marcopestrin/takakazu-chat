@@ -6,6 +6,7 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import ChatRoom from 'components/ChatRoom';
 import Divider from '@mui/material/Divider';
+import GitHubIcon from '@mui/icons-material/GitHub';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
@@ -24,11 +25,14 @@ export default function BasicGrid() {
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={2}>
           <Grid size={2}>
-            <Item></Item>
+            <Item>
+              <Typography variant="h5" gutterBottom>Takakazu Chat</Typography>
+              <a href="https://github.com/marcopestrin/takakazu-chat" target="_blanket">
+              <GitHubIcon /></a>
+            </Item>
           </Grid>
           <Grid size={10}>
             <Item>
-              <Typography variant="h5" gutterBottom>Takakazu Chat</Typography>
               <Divider />
               <ChatRoom />
             </Item>

@@ -8,7 +8,6 @@
   import ListItemText from '@mui/material/ListItemText';
   import ListItem from '@mui/material/ListItem';
 
-
   const urlBackend = `http://localhost:${process.env.REACT_APP_BACKEND_PORT}`;
   const socket = io(urlBackend);
 
@@ -25,6 +24,7 @@
 
     useEffect(() => {
       socket.on('message', (msg: Payload) => {
+        // console.log(msg);
         setMessages((prevMessages) => {
           return [
             ...prevMessages,
@@ -54,8 +54,9 @@
         <Box>
           <List>
             {messages.map((message, index) => (
-              <ListItem disablePadding>
+              <ListItem disablePadding key={index}>
                 <ListItemText>
+
                   {
                     message.userId === username ? (
                       <strong>{`${message.userId}: ${message.message}`}</strong>
