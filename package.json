@@ -1,7 +1,7 @@
 {
   "name": "takakazu-chat",
   "version": "0.1.0",
-  "description": "",
+  "description": "Open Source Project",
   "main": "dist/index.js",
   "scripts": {
     "_start": "webpack serve --mode development",
