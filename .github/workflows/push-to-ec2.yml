@@ -39,6 +39,7 @@ jobs:
           REMOTE_HOST: ${{ secrets.HOST_DNS }} # ec2-***-***-***-***.compute-1.amazonaws.com
           REMOTE_USER: ${{ secrets.USERNAME }} # ubuntu
           TARGET: ${{ secrets.TARGET_DIR }} # /home/ubuntu/app
+          ACTIONS_STEP_DEBUG: true
 
       - name: Executing remote ssh commands using ssh key
         uses: appleboy/ssh-action@master
