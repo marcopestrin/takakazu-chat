@@ -8,7 +8,7 @@
   import ListItemText from '@mui/material/ListItemText';
   import ListItem from '@mui/material/ListItem';
 
-  const urlBackend = `http://localhost:${process.env.REACT_APP_BACKEND_PORT}`;
+  const urlBackend = `${process.env.REACT_APP_BACKEND_URL}`;
   const socket = io(urlBackend);
 
   interface Payload {

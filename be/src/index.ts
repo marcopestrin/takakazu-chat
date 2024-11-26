@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv';
-import express from 'express';
+import express, { Request, Response } from 'express';
 import http from 'http';
 import { Server as SocketIOServer, Socket } from 'socket.io';
 import cors  from 'cors';
@@ -8,14 +8,14 @@ dotenv.config({ path: '../.env' });
 
 const roomName = 'main-room'
 const bePort = process.env.BE_PORT
-const fontendUrl = `http://localhost:${process.env.BE_FRONTEND_PORT}`
+const fontendUrl = `http://localhost:${process.env.FE_PORT}`
 const app = express();
 
 app.use(cors({
   origin: fontendUrl
 }));
 
-app.get('/socket.io', (req, res) => {
+app.get('/socket.io', (req: Request, res: Response) => {
   res.send('CORS headers are set!');
 });
 
@@ -30,10 +30,10 @@ const io = new SocketIOServer(server,{
 
 io.on('connection', async (socket: Socket) => {
   socket.join(roomName);
-  // console.log(`User '${socket.id}' added to '${roomName}'`);
+  console.log(`User '${socket.id}' added to '${roomName}'`);
 
-  await connectToDatabase();
-  console.log("Connected to database")
+  // await connectToDatabase();
+  // console.log("Connected to database")
 
   // get the conversation
   const messages = await getMessages();
@@ -44,11 +44,11 @@ io.on('connection', async (socket: Socket) => {
     const { message, userId } = JSON.parse(payload);
     // console.log(`message received: '${message}' from '${userId}'`);
     io.to(roomName).emit('message', JSON.parse(payload));
-    saveMessage({
-      timestamp: new Date().toISOString(),
-      message,
-      username: userId
-    })
+    // saveMessage({
+    //   timestamp: new Date().toISOString(),
+    //   message,
+    //   username: userId
+    // })
   });
 
   socket.on('disconnect', () => {
