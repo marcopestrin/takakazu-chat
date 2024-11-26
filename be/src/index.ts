@@ -36,13 +36,13 @@ io.on('connection', async (socket: Socket) => {
   // console.log("Connected to database")
 
   // get the conversation
-  const messages = await getMessages();
+  // const messages = await getMessages();
   // send conversation to FE
-  messages.map(m => io.to(roomName).emit('message', m));
+  // messages.map(m => io.to(roomName).emit('message', m));
   
   socket.on('message', (payload: string) => {
     const { message, userId } = JSON.parse(payload);
-    // console.log(`message received: '${message}' from '${userId}'`);
+    console.log(`message received: '${message}' from '${userId}'`);
     io.to(roomName).emit('message', JSON.parse(payload));
     // saveMessage({
     //   timestamp: new Date().toISOString(),
