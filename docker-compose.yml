@@ -24,11 +24,11 @@ services:
     environment:
       - NODE_ENV=development
       - DB_HOST=database-pg
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres
-      - DB_NAME=takakazu-chat
       - BE_PORT=5000
       - FE_PORT=3000
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
     depends_on:
       - database-pg
     networks:
@@ -43,9 +43,9 @@ services:
     ports:
       - "5433:5432"
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=takakazu-chat
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
