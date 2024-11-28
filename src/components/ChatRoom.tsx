@@ -21,6 +21,7 @@
     const [ inputMessage, setInputMessage ] = useState<string>('');
     const [ username, setUsername ] = useState<string>('');
     const [ usernameLock, setUsernameLock ] = useState<boolean>(false)
+    const [ init, setInit ] = useState<boolean>(false)
 
     useEffect(() => {
       socket.on('message', (msg: Payload) => {
@@ -34,17 +35,21 @@
       });
 
       socket.on('allMessages', (msgs: Payload[]) => {
-        // console.log({msgs});
-        msgs.map(m => setMessages((prevMessages) => {
-          return [
-            ...prevMessages,
-            m,
-          ]}
-        ));
+        if (!init) {
+          setMessages([]);
+          msgs.map(m => setMessages((prevMessages) => {
+            return [
+              ...prevMessages,
+              m,
+            ]}
+          ));
+          setInit(true);
+        }
       });
       
       return () => {
         socket.off('message');
+        socket.off('allMessages');
       };
     }, []);
 
