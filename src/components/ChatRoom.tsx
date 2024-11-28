@@ -33,6 +33,16 @@
         );
       });
 
+      socket.on('allMessages', (msgs: Payload[]) => {
+        // console.log({msgs});
+        msgs.map(m => setMessages((prevMessages) => {
+          return [
+            ...prevMessages,
+            m,
+          ]}
+        ));
+      });
+      
       return () => {
         socket.off('message');
       };

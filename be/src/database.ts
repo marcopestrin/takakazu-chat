@@ -1,41 +1,46 @@
 import { Client } from 'pg';
-import dotenv from 'dotenv';
-dotenv.config({ path: '../.env' }); 
 
 interface Payload {
-    timestamp: string
     username: string
     message: string
 }
 
 const client = new Client({
-  user: process.env.BE_DB_USER,
-  host: process.env.BE_DB_HOST,
-  database: process.env.BE_DB_NAME,
-  password: process.env.BE_DB_PASSWORD,
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
   port: 5432,
-  ssl: {
-    rejectUnauthorized: false
-  }
+  ssl: false
 });
 
-export async function connectToDatabase() {
+export async function createTableIfNotExists() {
   try {
-    await client.connect();
-  } catch (err) {
-    console.error(err);
+    await client.connect()
+    return await client.query(`
+      CREATE TABLE public.messages (
+        author VARCHAR(100) NOT NULL,
+        "content" TEXT NOT NULL,
+        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        id SERIAL PRIMARY KEY,
+        CONSTRAINT messages_unique UNIQUE (id)
+      );
+    `);
+  } catch (error) {
+    console.error(error);
+    return //process.exit(1);
   }
 }
 
-export async function saveMessage({ timestamp, message, username }: Payload){
+
+
+export async function saveMessage({ message, username }: Payload){
     try {
       await client.query(`
         INSERT INTO messages(
-          timestamp,
           content,
           author
         ) VALUES (
-         '${timestamp}',
          '${message}',
          '${username}'
         );
