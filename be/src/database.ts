@@ -14,25 +14,29 @@ const client = new Client({
   ssl: false
 });
 
-export async function createTableIfNotExists() {
+export async function initializeDatabase() {
   try {
-    await client.connect()
-    return await client.query(`
-      CREATE TABLE public.messages (
-        author VARCHAR(100) NOT NULL,
-        "content" TEXT NOT NULL,
-        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        id SERIAL PRIMARY KEY,
-        CONSTRAINT messages_unique UNIQUE (id)
-      );
+    await client.connect();
+
+    const res = await client.query(`
+      SELECT to_regclass('public.messages');
     `);
-  } catch (error) {
-    console.error(error);
-    return //process.exit(1);
+
+    if (res.rows[0].to_regclass === null) {
+      await client.query(`
+        CREATE TABLE public.messages (
+          author VARCHAR(100) NOT NULL,
+          "content" TEXT NOT NULL,
+          timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          id SERIAL PRIMARY KEY,
+          CONSTRAINT messages_unique UNIQUE (id)
+        );
+      `);
+    }
+  } catch (err) {
+    console.error(err);
   }
 }
-
-
 
 export async function saveMessage({ message, username }: Payload){
     try {

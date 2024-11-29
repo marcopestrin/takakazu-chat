@@ -3,7 +3,7 @@ import express, { Request, Response } from 'express';
 import http from 'http';
 import { Server as SocketIOServer, Socket } from 'socket.io';
 import cors  from 'cors';
-import { saveMessage, getMessages, createTableIfNotExists } from './database'
+import { saveMessage, getMessages, initializeDatabase } from './database'
 
 const roomName = 'main-room'
 const bePort = process.env.BE_PORT
@@ -54,7 +54,7 @@ io.on('connection', async (socket: Socket) => {
 });
 
 
-createTableIfNotExists().then(() => {
+initializeDatabase().then(() => {
   server.listen(bePort, () => {
     console.log(`Server Socket.IO avviato su http://localhost:${bePort}`);
   });
