@@ -3,7 +3,7 @@ import { Client } from 'pg';
 interface Payload {
     username: string
     message: string
-}
+};
 
 const client = new Client({
   user: process.env.DB_USER,
@@ -56,13 +56,20 @@ export async function saveMessage({ message, username }: Payload){
 
 export async function getMessages(){
   try {
-    const result = await client.query(`
-      SELECT
-        author AS "userId",
-        content AS message,
-        timestamp
-      FROM messages;
-    `);
+    const result = await client.query(
+      `SELECT
+        TO_CHAR(timestamp, 'DD-MM-YYYY') AS "messageDate",
+        json_agg(
+          json_build_object(
+            'userId', author,
+            'message', "content",
+            'timestamp', TO_CHAR(timestamp, 'HH24:MI')
+          )
+        ) AS messages
+      FROM public.messages
+      GROUP BY "messageDate"
+      ORDER BY "messageDate";
+    `)
     return result.rows;
   } catch (err) {
     console.error(err);   

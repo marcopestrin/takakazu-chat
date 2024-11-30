@@ -7,13 +7,21 @@ import Grid from '@mui/material/Grid2';
 import List from '@mui/material/List';
 import ListItemText from '@mui/material/ListItemText';
 import ListItem from '@mui/material/ListItem';
-import { Message } from '../interfaces/Message';
+import { Message, MessagesList, MessagesByDate } from '../interfaces/Message';
+import { getToday } from '../utils/date';
 
 const urlBackend = `${process.env.REACT_APP_BACKEND_URL}`;
 const socket = io(urlBackend);
 
+const defaultValue = [
+  {
+    messageDate: "",
+    messages: []
+  }
+];
+
 const ChatRoom: React.FC = () => {
-  const [ messages, setMessages ] = useState<Message[]>([]);
+  const [ messagesList, setMessagesList ] = useState<MessagesList>(defaultValue);
   const [ inputMessage, setInputMessage ] = useState<string>('');
   const [ username, setUsername ] = useState<string>(() => sessionStorage.getItem('username') || "");
   const [ usernameLock, setUsernameLock ] = useState<boolean>(false)
@@ -24,23 +32,37 @@ const ChatRoom: React.FC = () => {
     if (sessionStorage.getItem('username')) setUsernameLock(true);
 
     socket.on('message', (msg: Message) => {
-      setMessages((prevMessages) => {
+      setMessagesList(prevMessages => {
+        const today = getToday();
+        const existingIndex = prevMessages.findIndex(entry => entry.messageDate === today);
+      
+        if (existingIndex !== -1) {
+          // add message to already exist day
+          const updatedMessages = [...prevMessages];
+          updatedMessages[existingIndex] = {
+            ...updatedMessages[existingIndex],
+            messages: [
+              ...updatedMessages[existingIndex].messages,
+              msg
+            ]
+          };
+          return updatedMessages;
+        }
+      
+        // first message of the day
         return [
           ...prevMessages,
-          msg,
-        ]}
-      );
+          {
+            messageDate: today,
+            messages: [msg],
+          },
+        ];
+      });
     });
 
-    socket.on('allMessages', (msgs: Message[]) => {
+    socket.on('allMessages', (msgs: MessagesList) => {
       if (!init) {
-        setMessages([]);
-        msgs.map(m => setMessages((prevMessages) => {
-          return [
-            ...prevMessages,
-            m,
-          ]}
-        ));
+        setMessagesList(msgs);
         setInit(true);
       }
     });
@@ -67,19 +89,29 @@ const ChatRoom: React.FC = () => {
   return (
       <Box>
         <List>
-          {messages.map(({ userId, message, timestamp }: Message, index) => (
-            <ListItem disablePadding key={index}>
-              <ListItemText>
-                {
-                  userId === username ? (
-                    <strong>{`${userId}: ${message}`}</strong>
-                  ) :(
-                    `${userId}: ${message}`
-                  )
-                }
-              </ListItemText>
-            </ListItem>
-          ))}
+          {messagesList.map(({ messageDate, messages }: MessagesByDate, index) => (
+            <React.Fragment key={messageDate}>
+              <>{messageDate}</>
+              {messages.map(({ userId, message, timestamp }: Message, _i) => (
+                <ListItem
+                  disablePadding
+                  key={`${index}-${_i}`}
+                >
+                  <ListItemText>
+                    {
+                      userId === username ? (
+                        <strong>{`${userId}: ${message}`}</strong>
+                      ) :(
+                        `${userId}: ${message}`
+                      )
+                    }
+                  </ListItemText>
+                </ListItem>
+              ))
+            }
+            </React.Fragment>
+          ))
+        }
         </List>
         <Grid container spacing={2} alignItems="center">
           <Grid size={2}>
