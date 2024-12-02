@@ -3,6 +3,7 @@ import { Client } from 'pg';
 interface Payload {
     username: string
     message: string
+    room: string
 };
 
 const client = new Client({
@@ -25,10 +26,11 @@ export async function initializeDatabase() {
     if (res.rows[0].to_regclass === null) {
       await client.query(`
         CREATE TABLE public.messages (
+          id SERIAL PRIMARY KEY,
+          room VARCHAR(100) NOT NULL,
           author VARCHAR(100) NOT NULL,
           "content" TEXT NOT NULL,
-          timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          id SERIAL PRIMARY KEY,
+          timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
           CONSTRAINT messages_unique UNIQUE (id)
         );
       `);
@@ -38,14 +40,16 @@ export async function initializeDatabase() {
   }
 }
 
-export async function saveMessage({ message, username }: Payload){
+export async function saveMessage({ message, username, room }: Payload){
     try {
       await client.query(`
         INSERT INTO messages(
           content,
+          room,
           author
         ) VALUES (
          '${message}',
+         '${room}',
          '${username}'
         );
       `);

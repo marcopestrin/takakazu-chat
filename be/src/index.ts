@@ -43,6 +43,7 @@ io.on('connection', async (socket: Socket) => {
     io.to(roomName).emit('message', JSON.parse(payload));
     saveMessage({
       message,
+      room: roomName,
       username: userId
     })
   });
