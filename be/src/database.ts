@@ -56,9 +56,9 @@ export async function saveMessage({ message, username }: Payload){
 
 export async function getMessages(){
   try {
-    const result = await client.query(
-      `SELECT
-        TO_CHAR(timestamp, 'DD-MM-YYYY') AS "messageDate",
+    const result = await client.query(`
+      SELECT
+        TO_CHAR(timestamp::DATE, 'DD-MM-YYYY') AS "messageDate",
         json_agg(
           json_build_object(
             'userId', author,
@@ -68,7 +68,7 @@ export async function getMessages(){
         ) AS messages
       FROM public.messages
       GROUP BY "messageDate"
-      ORDER BY "messageDate";
+      ORDER BY MIN(timestamp);
     `)
     return result.rows;
   } catch (err) {
