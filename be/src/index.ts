@@ -3,9 +3,8 @@ import express, { Request, Response } from 'express';
 import http from 'http';
 import { Server as SocketIOServer, Socket } from 'socket.io';
 import cors  from 'cors';
-import { saveMessage, getMessages, initializeDatabase } from './database'
+import { saveMessage, getMessages, initializeDatabase, getRooms } from './database'
 
-const roomName = 'main-room'
 const bePort = process.env.BE_PORT
 const fontendUrl = `http://localhost:${process.env.FE_PORT}`
 const app = express();
@@ -27,29 +26,45 @@ const io = new SocketIOServer(server,{
   },
 });
 
+const socketRooms: { [socketId: string]: string } = {};
 
 io.on('connection', async (socket: Socket) => {
-  socket.join(roomName);
-  console.log(`User '${socket.id}' added to '${roomName}'`);
+  socket.join(""); // no room as default
+  console.log(`User '${socket.id}' connected`);
 
-  // get the conversation
-  const messages = await getMessages();
-  // send conversation to FE
-  socket.emit('allMessages', messages);
+  // get list of rooms
+  const rooms = await getRooms();
+  socket.emit('rooms', rooms);
   
   socket.on('message', (payload: string) => {
     const { message, userId } = JSON.parse(payload);
     console.log(`message received: '${message}' from '${userId}'`);
-    io.to(roomName).emit('message', JSON.parse(payload));
+    io.to(socketRooms[socket.id]).emit('message', JSON.parse(payload));
     saveMessage({
       message,
-      room: roomName,
+      room: socketRooms[socket.id],
       username: userId
     })
   });
 
+  socket.on('changeRoom', async (newRoom) => {
+    const currentRoom = socketRooms[socket.id];
+
+    if (newRoom && newRoom !== currentRoom) {
+      socket.leave(currentRoom);
+      socket.join(newRoom);
+      socketRooms[socket.id] = newRoom;
+      console.log(`'${socket.id}' left '${currentRoom}' and added to '${newRoom}'`);
+      socket.emit('roomChanged', `Room changed. Now you are in ${newRoom}`);
+      const messages = await getMessages(socketRooms[socket.id]);
+      socket.emit('allMessages', messages);
+    }
+  });
+
   socket.on('disconnect', () => {
     console.log('Disconnected user:', socket.id);
+    socket.leave(socketRooms[socket.id]);
+    delete socketRooms[socket.id];  
   });
 
 });
@@ -57,7 +72,7 @@ io.on('connection', async (socket: Socket) => {
 
 initializeDatabase().then(() => {
   server.listen(bePort, () => {
-    console.log(`Server Socket.IO avviato su http://localhost:${bePort}`);
+    console.log(`Server Socket.IO loaded on http://localhost:${bePort}`);
   });
 })
 
