@@ -7,7 +7,6 @@ import MessageList from './MessageList';
 import RoomSelector from './RoomSelector';
 import { Message, MessagesList } from '../interfaces/Message';
 
-
 const urlBackend = `${process.env.REACT_APP_BACKEND_URL}`;
 const socket = io(urlBackend);
 
@@ -29,19 +28,21 @@ const ChatRoom: React.FC = () => {
 
   const [ inputMessage, setInputMessage ] = useState<string>('');
   const [ username, setUsername ] = useState<string>(() => sessionStorage.getItem('username') || "");
-  const [ usernameLock, setUsernameLock ] = useState<boolean>(false)
+  const [ usernameLock, setUsernameLock ] = useState<boolean>(false);
 
   useEffect(() => {
 
     if (sessionStorage.getItem('username')) setUsernameLock(true);
 
+    // message received after processing it
     socket.on('message', (msg: Message) => {
       msg.timestamp = getCurrentTime();
       setMessagesList(prevMessages => {
         const today = getToday();
         const existingIndex = prevMessages.findIndex(entry => entry.messageDate === today);
       
-        if (existingIndex !== -1) { // add message to already exist day
+        if (existingIndex !== -1) {
+          // add message to already exist day
           const updatedMessages = [...prevMessages];
           updatedMessages[existingIndex] = {
             ...updatedMessages[existingIndex],
@@ -53,7 +54,8 @@ const ChatRoom: React.FC = () => {
           return updatedMessages;
         }
       
-        return [ // first message of the day
+        // first message of the day
+        return [
           ...prevMessages,
           {
             messageDate: today,
@@ -63,17 +65,23 @@ const ChatRoom: React.FC = () => {
       });
     });
 
+    // get previous conversation
     socket.on('allMessages', (msgs: MessagesList) => {
-      if (msgs.length) setMessagesList(msgs);
+      if (msgs.length) {
+        setMessagesList(msgs);
+      }
     });
 
+    // set the list of rooms
     socket.on('rooms', (rooms: string[]) => setRooms(rooms));
-    socket.on('roomChanged', (feedback: string) => {
+
+    // confirmation room is changed
+    socket.on('roomChanged', (newRoom: string) => {
       setOpenSnackbar(true);
-      setContentSnackbar(feedback);
+      setContentSnackbar(`Now you are in ${newRoom}`);
+      sessionStorage.setItem('room', newRoom);
     });
 
-    
     return () => {
       socket.off('message');
       socket.off('allMessages');
@@ -81,9 +89,8 @@ const ChatRoom: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    handleSetRoom(room)
+    handleSetRoom(room);
   }, [room])
-
 
   const handleMessageSend = () => {
     if (inputMessage.trim() !== '') {
@@ -92,28 +99,27 @@ const ChatRoom: React.FC = () => {
         message: inputMessage
       }));
       setInputMessage('');
-      setUsernameLock(true)
+      setUsernameLock(true);
+      sessionStorage.setItem('username', username);
     }
-    sessionStorage.setItem('username', username);
   };
 
   const handleSetRoom = (roomSelected: string) => {
     if (!rooms.includes(room)){
+      // is a new room
       setMessagesList(defaultValue);
     }
-    socket.emit('changeRoom', roomSelected);
-    setRoom(roomSelected);
+    socket.emit('changeRoom', roomSelected); // set BE
+    setRoom(roomSelected); // set FE
   };
 
-  const handleCloseSnackbar = () => {
-    setOpenSnackbar(false);
-  };
 
   return (
       <Box sx={{ maxWidth: '100%', padding: 2 }}>
         <RoomSelector 
           handleSetRoom={handleSetRoom}
           rooms={rooms || []}
+          defaultValue={room}
         />
         <MessageList
           username={username}
@@ -130,7 +136,7 @@ const ChatRoom: React.FC = () => {
         <Snackbar
           open={openSnackbar}
           autoHideDuration={3000}
-          onClose={handleCloseSnackbar}
+          onClose={() => setOpenSnackbar(false)}
           message={contentSnackbar}
           anchorOrigin={{
             vertical: 'bottom',

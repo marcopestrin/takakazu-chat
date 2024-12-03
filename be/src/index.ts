@@ -55,7 +55,7 @@ io.on('connection', async (socket: Socket) => {
       socket.join(newRoom);
       socketRooms[socket.id] = newRoom;
       console.log(`'${socket.id}' left '${currentRoom}' and added to '${newRoom}'`);
-      socket.emit('roomChanged', `Room changed. Now you are in ${newRoom}`);
+      socket.emit('roomChanged', newRoom);
       const messages = await getMessages(socketRooms[socket.id]);
       socket.emit('allMessages', messages);
     }
@@ -72,7 +72,7 @@ io.on('connection', async (socket: Socket) => {
 
 initializeDatabase().then(() => {
   server.listen(bePort, () => {
-    console.log(`Server Socket.IO loaded on http://localhost:${bePort}`);
+    console.log(`Server Socket.IO loaded  http://localhost:${bePort}`);
   });
 })
 

@@ -17,11 +17,16 @@ import {
 interface RoomSelectorProps {
   handleSetRoom: (room: string) => void;
   rooms: string[];
+  defaultValue: string;
 }
 
-const RoomSelector: React.FC<RoomSelectorProps> = ({ handleSetRoom, rooms }) => {
+const RoomSelector: React.FC<RoomSelectorProps> = ({
+  handleSetRoom,
+  rooms,
+  defaultValue
+}) => {
 
-  const [ room, setRoom ] = useState<string>("");
+  const [ room, setRoom ] = useState<string>(defaultValue);
   const [ openDialog, setOpenDialog ] = useState(false);
   const [ newRoom, setNewRoom ] = useState<string>('');
 
