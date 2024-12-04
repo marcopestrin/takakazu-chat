@@ -1,4 +1,4 @@
-### Takakazu-chat
+# Takakazu-chat
 
 ## First Setup 
 
@@ -19,11 +19,11 @@ Just browse to [Home](http://localhost:3000)!
 - PostgreSQL
 - Nodemon
 
-# Features
+### Features
 - multi room chat
 - instant refresh from multiple browser pages
 - saved `username` and `room` on **sessionStorage** in case of page refresh
 
 
-# Patterns
+### Patterns
 - 
