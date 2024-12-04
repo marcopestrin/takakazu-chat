@@ -1,7 +1,6 @@
 # Takakazu-chat
 
 ## First Setup 
-
 ```shell
 docker-compose up --build --no-cache
 ```
@@ -9,7 +8,7 @@ docker-compose up --build --no-cache
 ## Frontend
 Just browse to [Home](http://localhost:3000)!
 
-### Technologies
+## Technologies
 - Docker
 - Typescript
 - Vanilla Javascript
@@ -19,11 +18,11 @@ Just browse to [Home](http://localhost:3000)!
 - PostgreSQL
 - Nodemon
 
-### Features
+## Features
 - multi room chat
 - instant refresh from multiple browser pages
 - saved `username` and `room` on **sessionStorage** in case of page refresh
 
 
-### Patterns
+## Patterns
 - 
