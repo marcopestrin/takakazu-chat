@@ -82,10 +82,10 @@ export async function saveMessage({ message, username, room }: Payload){
       await client.query('BEGIN');
       
       const roomResult: QueryResult = await client.query(`
-        INSERT INTO public.rooms (name) VALUES ('${room}')
+        INSERT INTO public.rooms (name) VALUES ($1)
         ON CONFLICT (name) DO NOTHING
         RETURNING id
-      `);
+      `, [room]);
       console.log("roomResult:", roomResult)
 
       const roomId = roomResult.rows.length > 0
@@ -99,9 +99,9 @@ export async function saveMessage({ message, username, room }: Payload){
 
       await client.query(`
         INSERT INTO public.messages (author, content, room_id)
-        VALUES ('${username}', '${message}', ${roomId})
+        VALUES ($1, $2, $3)
         RETURNING id;
-      `);
+      `, [username, message, roomId]);
 
       await client.query('COMMIT');
     } catch (err) {
