@@ -2,7 +2,7 @@
 
 ## First Setup 
 ```shell
-docker-compose up --build --no-cache
+docker-compose up --build
 ```
 
 ## Frontend
